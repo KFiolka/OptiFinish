@@ -20,13 +20,13 @@
     - [x] **Interaktion:** `cursor-pointer` explizit setzen
 
 ## Phase 3: Core-Logik & State Management
-- [ ] **Zustand Store Setup** (`useGameStore`)
-    - [ ] State: `score` (301/501), `history`, `currentTurn`
-    - [ ] Actions: `throw`, `undo`, `submit`
-- [ ] **UI Integration**
-    - [ ] Scoreboard an Store binden (Live-Updates)
-    - [ ] InputPad an Store binden (Interaktion)
-- [ ] **Game Logic Rules**
-    - [ ] Bust-Logik (Überworfen)
-    - [ ] Double-Out Validierung
-    - [ ] Match Won State
+- [x] **Zustand Store Setup** (`useGameStore`)
+    - [x] State: `score` (301/501), `history`, `currentTurn`
+    - [x] Actions: `throw`, `undo`, `submit`
+- [x] **UI Integration**
+    - [x] Scoreboard an Store binden (Live-Updates)
+    - [x] InputPad an Store binden (Interaktion)
+- [x] **Game Logic Rules**
+    - [x] Bust-Logik (Überworfen)
+    - [x] Double-Out Validierung
+    - [x] Match Won State
