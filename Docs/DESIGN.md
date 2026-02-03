@@ -34,3 +34,18 @@ The design leverages a **"Deep Focus Tech"** aesthetic, characterized by a dark,
 *   **Density:** Compact but touch-friendly. Input pads use a tight grid (`gap-1`), while display areas use generous negative space to frame the score.
 *   **Navigation:** Fixed bottom bar (`h-[80px]`) with glassmorphism (`backdrop-blur-md`).
 *   **Z-Axis:** Distinct layering. Background -> Content Surfaces -> Glass Overlays -> Floating Action Buttons/Modals.
+
+## 6. Game Phase Visuals (Cockpit Logic)
+The interface adapts dynamically to the game state ("Game Cycle") to provide subconscious strategic feedback:
+*   **SCORING (>170):**
+    *   **Color:** Muted Slate / Ice White (`text-slate-400`, `border-slate-400`)
+    *   **Anim:** Static or Slow Breathe.
+    *   **Vibe:** Calm, Accumulation.
+*   **SETUP (101-170):**
+    *   **Color:** Focus Amber (`text-amber-400`, `border-amber-400`)
+    *   **Anim:** Active Pulse.
+    *   **Vibe:** Alert, Preparation.
+*   **CHECKOUT (<=100):**
+    *   **Color:** Electric Blue (`text-primary`, `border-primary`)
+    *   **Anim:** Intense Heartbeat (Fast Pulse).
+    *   **Vibe:** Attack, Execution.

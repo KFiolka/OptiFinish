@@ -41,6 +41,44 @@ export const Scoreboard: React.FC = () => {
         }
     };
 
+    // Game Phase Logic
+    const getGamePhase = (currentScore: number) => {
+        if (currentScore > 170) return 'SCORING';
+        if (currentScore > 100) return 'SETUP'; // 101-170
+        return 'CHECKOUT'; // <= 100
+    };
+
+    const phase = getGamePhase(score);
+
+    // Dynamic Styles based on Phase
+    const getPhaseStyles = () => {
+        switch (phase) {
+            case 'SCORING':
+                return {
+                    label: 'PHASE: SCORING',
+                    ringColor: 'border-slate-400', // Ice/White-ish
+                    textColor: 'text-slate-400',
+                    pulse: false
+                };
+            case 'SETUP':
+                return {
+                    label: 'PHASE: SETUP',
+                    ringColor: 'border-amber-400', // Amber/Focus
+                    textColor: 'text-amber-400',
+                    pulse: true
+                };
+            case 'CHECKOUT':
+                return {
+                    label: 'PHASE: CHECKOUT',
+                    ringColor: 'border-primary', // Electric Blue
+                    textColor: 'text-primary',
+                    pulse: true
+                };
+        }
+    };
+
+    const phaseStyle = getPhaseStyles();
+
     return (
         <div className="flex-1 flex flex-col relative w-full overflow-hidden min-h-0">
             <section className="flex flex-col items-center justify-center py-2 shrink-0 bg-surface-dark/20 border-b border-white/5 backdrop-blur-sm relative z-10 w-full">
@@ -87,16 +125,16 @@ export const Scoreboard: React.FC = () => {
                         onClick={() => pathSteps.length > 0 && handlePathClick(pathSteps[0])}
                         className={`relative w-44 h-44 flex items-center justify-center group mx-auto transition-transform active:scale-95 ${pathSteps.length > 0 ? 'cursor-pointer' : ''}`}
                     >
-                        <div className={`absolute inset-0 rounded-full border border-primary/20 blur-sm scale-105 ${isCheckout ? 'animate-pulse' : ''}`}></div>
-                        <div className={`absolute inset-0 rounded-full border-[8px] shaow-[inset_0_0_20px_rgba(0,0,0,0.5)] transition-colors ${pathSteps.length > 0 ? 'border-surface-dark group-hover:border-primary/30' : 'border-surface-dark'}`}></div>
+                        <div className={`absolute inset-0 rounded-full border ${phaseStyle.ringColor}/20 blur-sm scale-105 ${phaseStyle.pulse ? 'animate-pulse' : ''}`}></div>
+                        <div className={`absolute inset-0 rounded-full border-[8px] shaow-[inset_0_0_20px_rgba(0,0,0,0.5)] transition-colors ${phaseStyle.ringColor} ${pathSteps.length > 0 ? 'group-hover:brightness-125' : ''}`}></div>
                         <svg className="absolute inset-0 size-full -rotate-90 transform drop-shadow-glow-intense" viewBox="0 0 100 100">
-                            <circle className="" cx="50" cy="50" fill="transparent" r="44" stroke="#137fec" strokeLinecap="round" strokeWidth="6"></circle>
+                            <circle cx="50" cy="50" fill="transparent" r="44" stroke="currentColor" className={phaseStyle.textColor} strokeOpacity="0.1" strokeLinecap="round" strokeWidth="6"></circle>
                         </svg>
                         <div className="flex flex-col items-center justify-center z-10 text-center">
                             {pathSteps.length > 0 ? (
                                 <>
-                                    <span className={`text-[9px] uppercase tracking-[0.25em] font-bold mb-1 drop-shadow-md ${isCheckout ? 'text-primary' : 'text-slate-400'}`}>
-                                        {isCheckout ? 'CHECKOUT' : 'SETUP'}
+                                    <span className={`text-[9px] uppercase tracking-[0.25em] font-bold mb-1 drop-shadow-md ${phaseStyle.textColor}`}>
+                                        {phaseStyle.label}
                                     </span>
                                     <span className="text-4xl font-bold text-white tracking-tighter drop-shadow-lg">
                                         {isCheckout ? pathSteps.join(" ") : pathSteps[0]}

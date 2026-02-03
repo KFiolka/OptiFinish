@@ -13,7 +13,7 @@
 - [x] **Basis-Komponenten erstellen** (Buttons, Cards, Inputs) via Stitch
 - [ ] **Screens implementieren**
     - [x] Training Dashboard (Main Screen)
-    - [x] Settings / Menu
+- [x] Settings / Menu
 - [x] **UI/UX Quality Polish (Pro Max Audit)**
     - [x] **Accessibility:** `aria-label` für alle Icon-Buttons hinzufügen
     - [x] **Touch Targets:** Buttons auf min. 44x44px vergrößern (besonders Input-Grid)
@@ -23,9 +23,12 @@
 - [x] **Zustand Store Setup** (`useGameStore`)
     - [x] State: `score` (301/501), `history`, `currentTurn`
     - [x] Actions: `throw`, `undo`, `submit`
+    - [x] **Optimal Checkout Logic:** Rekursiver Solver für korrekte Pfade (inkl. 121, 169 etc.)
 - [x] **UI Integration**
     - [x] Scoreboard an Store binden (Live-Updates)
     - [x] InputPad an Store binden (Interaktion)
+    - [x] **Interaktive Pfad-Visualisierung:** Click-to-Throw Funktion
+    - [x] **Game Phase UI:** Scoring/Setup/Checkout Ring-Farben & Labels
 - [x] **Game Logic Rules**
     - [x] Bust-Logik (Überworfen)
     - [x] Double-Out Validierung
