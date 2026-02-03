@@ -102,9 +102,9 @@ export const InputPad: React.FC = () => {
                     className="w-full h-11 mt-1 text-base uppercase tracking-wide"
                     onClick={nextTurn}
                 >
-                    Übernehmen
+                    WEITER
                 </Button>
             </div>
-        </Card>
+        </Card >
     );
 };
