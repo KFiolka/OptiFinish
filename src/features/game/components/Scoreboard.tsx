@@ -4,12 +4,42 @@ import { useGameStore } from '../store/useGameStore';
 export const Scoreboard: React.FC = () => {
     // Destructure getStats
     // Destructure getStats
-    const { score, currentTurnThrows, optimalPath, getStats } = useGameStore();
+    const { score, currentTurnThrows, optimalPath, getStats, throwDart } = useGameStore();
 
     const stats = getStats();
-    // Helper to format path
     const pathSteps = optimalPath ? optimalPath.path : [];
     const isCheckout = optimalPath?.type === 'checkout';
+
+    // Helper: Parse string notation to throw parameters
+    const parseDartValue = (val: string): { segment: number, multiplier: 1 | 2 | 3 } | null => {
+        const clean = val.toUpperCase().trim();
+        let multiplier: 1 | 2 | 3 = 1;
+        let segmentStr = clean;
+
+        if (clean === 'BULL' || clean === 'DBULL' || clean === 'D-BULL') return { segment: 25, multiplier: 2 };
+        if (clean === '25' || clean === 'SBULL' || clean === 'S-BULL') return { segment: 25, multiplier: 1 };
+        if (clean === 'MISS') return { segment: 0, multiplier: 1 };
+
+        if (clean.startsWith('D')) {
+            multiplier = 2;
+            segmentStr = clean.substring(1);
+        } else if (clean.startsWith('T')) {
+            multiplier = 3;
+            segmentStr = clean.substring(1);
+        }
+
+        const segment = parseInt(segmentStr);
+        if (isNaN(segment)) return null;
+
+        return { segment, multiplier };
+    };
+
+    const handlePathClick = (val: string) => {
+        const parsed = parseDartValue(val);
+        if (parsed) {
+            throwDart(parsed.segment, parsed.multiplier);
+        }
+    };
 
     return (
         <div className="flex-1 flex flex-col relative w-full overflow-hidden min-h-0">
@@ -53,9 +83,12 @@ export const Scoreboard: React.FC = () => {
                     </div>
 
                     {/* Main Vis */}
-                    <div className="relative w-44 h-44 flex items-center justify-center group mx-auto">
+                    <div
+                        onClick={() => pathSteps.length > 0 && handlePathClick(pathSteps[0])}
+                        className={`relative w-44 h-44 flex items-center justify-center group mx-auto transition-transform active:scale-95 ${pathSteps.length > 0 ? 'cursor-pointer' : ''}`}
+                    >
                         <div className={`absolute inset-0 rounded-full border border-primary/20 blur-sm scale-105 ${isCheckout ? 'animate-pulse' : ''}`}></div>
-                        <div className="absolute inset-0 rounded-full border-[8px] border-surface-dark shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]"></div>
+                        <div className={`absolute inset-0 rounded-full border-[8px] shaow-[inset_0_0_20px_rgba(0,0,0,0.5)] transition-colors ${pathSteps.length > 0 ? 'border-surface-dark group-hover:border-primary/30' : 'border-surface-dark'}`}></div>
                         <svg className="absolute inset-0 size-full -rotate-90 transform drop-shadow-glow-intense" viewBox="0 0 100 100">
                             <circle className="" cx="50" cy="50" fill="transparent" r="44" stroke="#137fec" strokeLinecap="round" strokeWidth="6"></circle>
                         </svg>
@@ -84,7 +117,11 @@ export const Scoreboard: React.FC = () => {
                     <div className="flex flex-col gap-6 w-10 items-center justify-center">
                         {pathSteps.length > 1 ? (
                             pathSteps.slice(1, 4).map((step, idx) => (
-                                <div key={idx} className={`flex flex-col items-center opacity-80 scale-90`}>
+                                <div
+                                    key={idx}
+                                    onClick={() => handlePathClick(step)}
+                                    className={`flex flex-col items-center opacity-80 scale-90 cursor-pointer hover:opacity-100 hover:scale-100 transition-all active:scale-90`}
+                                >
                                     <span className="text-xs font-bold text-white">{step}</span>
                                 </div>
                             ))
@@ -101,7 +138,10 @@ export const Scoreboard: React.FC = () => {
                     {pathSteps.length > 0 ? (
                         pathSteps.map((step, idx) => (
                             <React.Fragment key={idx}>
-                                <div className={`flex items-center justify-center w-[60px] h-[44px] rounded-lg border relative overflow-hidden ${idx === 0 ? (isCheckout ? 'bg-primary border-primary/50 shadow-glow text-white' : 'bg-blue-600/50 border-blue-400/30 text-white') : 'bg-surface-dark border-slate-700 opacity-80 text-slate-200'}`}>
+                                <div
+                                    onClick={() => handlePathClick(step)}
+                                    className={`flex items-center justify-center w-[60px] h-[44px] rounded-lg border relative overflow-hidden cursor-pointer hover:brightness-110 active:scale-95 transition-all ${idx === 0 ? (isCheckout ? 'bg-primary border-primary/50 shadow-glow text-white' : 'bg-blue-600/50 border-blue-400/30 text-white') : 'bg-surface-dark border-slate-700 opacity-80 text-slate-200'}`}
+                                >
                                     <span className="text-lg font-bold tracking-tight">{step}</span>
                                 </div>
                                 {idx < pathSteps.length - 1 && <span className="material-symbols-outlined text-slate-600 text-base">arrow_forward</span>}
