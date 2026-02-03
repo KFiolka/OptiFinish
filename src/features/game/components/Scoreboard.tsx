@@ -3,23 +3,13 @@ import { useGameStore } from '../store/useGameStore';
 
 export const Scoreboard: React.FC = () => {
     // Destructure getStats
-    const { score, currentTurnThrows, checkoutPath, getStats } = useGameStore();
-
-    // Call it to get current values (it reads state internally via get())
-    // Wait, getStats is an action that calls get(). 
-    // In strict Zustand, to make it reactive, we usually do: 
-    // const avg = useGameStore(state => selectAvg(state))
-    // BUT here `getStats` is an action that uses `get()`. That assumes `getStats` is called IMPERATIVELY.
-    // However, if I call it during render, it might work if it doesn't cause side effects, but it won't subscribe to changes 
-    // unless the store state itself changed and triggered a re-render.
-    // `useGameStore()` hooks into all state changes by default if no selector is passed.
-    // So `score` change -> re-render -> `getStats()` called again.
-    // Since `getStats` reads `get().history`, it should read the LATEST state.
-
-    // Better pattern would be a selector, but for now this works because the component re-renders on ANY store change 
-    // (since we destructure from `useGameStore()` without a selector).
+    // Destructure getStats
+    const { score, currentTurnThrows, optimalPath, getStats } = useGameStore();
 
     const stats = getStats();
+    // Helper to format path
+    const pathSteps = optimalPath ? optimalPath.path : [];
+    const isCheckout = optimalPath?.type === 'checkout';
 
     return (
         <div className="flex-1 flex flex-col relative w-full overflow-hidden min-h-0">
@@ -64,33 +54,36 @@ export const Scoreboard: React.FC = () => {
 
                     {/* Main Vis */}
                     <div className="relative w-44 h-44 flex items-center justify-center group mx-auto">
-                        <div className="absolute inset-0 rounded-full border border-primary/20 blur-sm scale-105 animate-pulse"></div>
+                        <div className={`absolute inset-0 rounded-full border border-primary/20 blur-sm scale-105 ${isCheckout ? 'animate-pulse' : ''}`}></div>
                         <div className="absolute inset-0 rounded-full border-[8px] border-surface-dark shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]"></div>
                         <svg className="absolute inset-0 size-full -rotate-90 transform drop-shadow-glow-intense" viewBox="0 0 100 100">
                             <circle className="" cx="50" cy="50" fill="transparent" r="44" stroke="#137fec" strokeLinecap="round" strokeWidth="6"></circle>
                         </svg>
-                        <div className="flex flex-col items-center justify-center z-10">
-                            {checkoutPath && checkoutPath.length > 0 ? (
+                        <div className="flex flex-col items-center justify-center z-10 text-center">
+                            {pathSteps.length > 0 ? (
                                 <>
-                                    <span className="text-[9px] uppercase tracking-[0.25em] text-primary font-bold mb-1 drop-shadow-md">CHECKOUT</span>
-                                    <span className="text-4xl font-bold text-white tracking-tighter drop-shadow-lg">{checkoutPath.join(" ")}</span>
+                                    <span className={`text-[9px] uppercase tracking-[0.25em] font-bold mb-1 drop-shadow-md ${isCheckout ? 'text-primary' : 'text-slate-400'}`}>
+                                        {isCheckout ? 'CHECKOUT' : 'SETUP'}
+                                    </span>
+                                    <span className="text-4xl font-bold text-white tracking-tighter drop-shadow-lg">
+                                        {isCheckout ? pathSteps.join(" ") : pathSteps[0]}
+                                    </span>
                                 </>
-
                             ) : (
                                 <>
-                                    <span className="text-[9px] uppercase tracking-[0.25em] text-primary font-bold mb-1 drop-shadow-md">OPTIMAL</span>
+                                    <span className="text-[9px] uppercase tracking-[0.25em] text-slate-500 font-bold mb-1 drop-shadow-md">WAITING</span>
                                     <div className="flex flex-col items-center">
-                                        <span className="text-sm text-slate-400">Setup</span>
+                                        <span className="text-sm text-slate-400">...</span>
                                     </div>
                                 </>
                             )}
                         </div>
                     </div>
 
-                    {/* Checkout Suggestions - Visual Representation */}
+                    {/* Checkout Suggestions - Visual Representation / Next Steps */}
                     <div className="flex flex-col gap-6 w-10 items-center justify-center">
-                        {checkoutPath && checkoutPath.length > 0 ? (
-                            checkoutPath.slice(0, 3).map((step, idx) => (
+                        {pathSteps.length > 1 ? (
+                            pathSteps.slice(1, 4).map((step, idx) => (
                                 <div key={idx} className={`flex flex-col items-center opacity-80 scale-90`}>
                                     <span className="text-xs font-bold text-white">{step}</span>
                                 </div>
@@ -105,13 +98,13 @@ export const Scoreboard: React.FC = () => {
             {/* Checkout Path - Footer */}
             <div className="shrink-0 w-full py-3 bg-surface-darker/50 border-t border-white/5 backdrop-blur-md">
                 <div className="flex items-center justify-center gap-3">
-                    {checkoutPath ? (
-                        checkoutPath.map((step, idx) => (
+                    {pathSteps.length > 0 ? (
+                        pathSteps.map((step, idx) => (
                             <React.Fragment key={idx}>
-                                <div className={`flex items-center justify-center w-[60px] h-[44px] rounded-lg border relative overflow-hidden ${idx === 0 ? 'bg-primary border-primary/50 shadow-glow text-white' : 'bg-surface-dark border-slate-700 opacity-80 text-slate-200'}`}>
+                                <div className={`flex items-center justify-center w-[60px] h-[44px] rounded-lg border relative overflow-hidden ${idx === 0 ? (isCheckout ? 'bg-primary border-primary/50 shadow-glow text-white' : 'bg-blue-600/50 border-blue-400/30 text-white') : 'bg-surface-dark border-slate-700 opacity-80 text-slate-200'}`}>
                                     <span className="text-lg font-bold tracking-tight">{step}</span>
                                 </div>
-                                {idx < checkoutPath.length - 1 && <span className="material-symbols-outlined text-slate-600 text-base">arrow_forward</span>}
+                                {idx < pathSteps.length - 1 && <span className="material-symbols-outlined text-slate-600 text-base">arrow_forward</span>}
                             </React.Fragment>
                         ))
                     ) : (

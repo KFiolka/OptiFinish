@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { getCheckoutPath } from '../logic/checkout';
+import { getOptimalPath, type PathResult } from '../logic/checkout';
 
 export type Throw = {
     segment: number; // 1-20, 25 (Bull)
@@ -14,7 +14,7 @@ export type GameState = {
     history: Throw[]; // Flat history of all valid throws
     currentTurnThrows: Throw[]; // Throws in the current turn (max 3)
     isWon: boolean;
-    checkoutPath: string[] | null;
+    optimalPath: PathResult | null;
 
     // Actions
     throwDart: (segment: number, multiplier: 1 | 2 | 3) => void;
@@ -29,7 +29,7 @@ export const useGameStore = create<GameState>((set, get) => ({
     history: [],
     currentTurnThrows: [],
     isWon: false,
-    checkoutPath: getCheckoutPath(301),
+    optimalPath: getOptimalPath(301),
 
     throwDart: (segment, multiplier) => {
         const { score, currentTurnThrows, isWon } = get();
@@ -69,12 +69,29 @@ export const useGameStore = create<GameState>((set, get) => ({
             return;
         }
 
+        const nextScore = newScore;
+        const nextThrowsCount = currentTurnThrows.length + 1;
+        // Remaining darts for this turn to calculate path correctly?
+        // Actually getOptimalPath takes dartsRemaining. 
+        // Logic: if I just threw my 1st dart, I have 2 left.
+        const dartsLeftInTurn = 3 - nextThrowsCount;
+
+        // However, for the UI "Suggestion", we usually suggest for the NEXT full turn if we are done?
+        // Or continuously update? 
+        // If I have 2 darts left, I want path for 2 darts.
+        // If I have 0 darts left (end of turn), I wait for "Next Turn".
+        // But the store updates immediately.
+
+        // If I just threw 3rd dart, dartsLeftInTurn is 0. 
+        // Then we technically start looking at next turn (3 darts).
+        const dartsForCalc = dartsLeftInTurn === 0 ? 3 : dartsLeftInTurn;
+
         set((state) => ({
-            score: newScore,
+            score: nextScore,
             history: [...state.history, newThrow],
             currentTurnThrows: [...state.currentTurnThrows, newThrow],
-            isWon: newScore === 0,
-            checkoutPath: getCheckoutPath(newScore)
+            isWon: nextScore === 0,
+            optimalPath: getOptimalPath(nextScore, dartsForCalc)
         }));
     },
 
@@ -84,22 +101,31 @@ export const useGameStore = create<GameState>((set, get) => ({
             if (!lastThrow) return state; // Only undo current turn
 
             const prevScore = state.score + lastThrow.value;
+            // Darts remaining before this throw?
+            // If we undo 3rd throw (idx 2), we go back to having 1 dart left? No, we go back to state BEFORE 3rd throw.
+            // i.e. we had 2 throws.
+            const prevThrowsCount = state.currentTurnThrows.length - 1;
+            const dartsLeft = 3 - prevThrowsCount;
 
             return {
                 score: prevScore,
                 history: state.history.slice(0, -1),
                 currentTurnThrows: state.currentTurnThrows.slice(0, -1),
                 isWon: false,
-                checkoutPath: getCheckoutPath(prevScore)
+                optimalPath: getOptimalPath(prevScore, dartsLeft)
             };
         });
     },
 
     nextTurn: () => {
-        set({ currentTurnThrows: [] });
+        // New turn -> 3 darts available
+        set((state) => ({
+            currentTurnThrows: [],
+            optimalPath: getOptimalPath(state.score, 3)
+        }));
     },
 
-    reset: () => set({ score: 301, history: [], currentTurnThrows: [], isWon: false, checkoutPath: getCheckoutPath(301) }),
+    reset: () => set({ score: 301, history: [], currentTurnThrows: [], isWon: false, optimalPath: getOptimalPath(301) }),
 
     getStats: () => {
         const { history, currentTurnThrows } = get();

@@ -13,7 +13,7 @@
 - [x] **Basis-Komponenten erstellen** (Buttons, Cards, Inputs) via Stitch
 - [ ] **Screens implementieren**
     - [x] Training Dashboard (Main Screen)
-    - [ ] Settings / Menu
+    - [x] Settings / Menu
 - [x] **UI/UX Quality Polish (Pro Max Audit)**
     - [x] **Accessibility:** `aria-label` für alle Icon-Buttons hinzufügen
     - [x] **Touch Targets:** Buttons auf min. 44x44px vergrößern (besonders Input-Grid)

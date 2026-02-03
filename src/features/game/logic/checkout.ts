@@ -37,50 +37,43 @@ const CHECKOUT_MAP: Record<number, string[]> = {
     2: ["D1"]
 };
 
-/**
- * Calculates a simple checkout path.
- * For MVP, we stick to a lookup table for common optimal paths.
- * If no direct entry, we can return null or a generic advice.
- */
-export const getCheckoutPath = (score: number, dartsRemaining: number = 3): string[] | null => {
-    if (score <= 1) return null; // Bust or 1 (impossible)
-    if (score > 170) return null; // No 3-dart finish possible
 
-    // 1. Direct Lookup
-    if (CHECKOUT_MAP[score]) {
-        // Filter if we have fewer darts? 
-        // For now, static path assumes full turn or we just show the "Check out" path regardless of darts left.
-        // Ideally, if I have 1 dart left and need 100, I can't check out.
+export type PathResult = {
+    path: string[];
+    type: 'checkout' | 'setup';
+};
 
-        const path = CHECKOUT_MAP[score];
-        if (path.length > dartsRemaining) {
-            // Can't finish in remaining darts
-            // Could return "Setup" advice?
-            return null;
-        }
-        return path;
+export const getOptimalPath = (score: number, dartsRemaining: number = 3): PathResult | null => {
+    if (score <= 1) return null;
+
+    // 1. Check for valid 3-dart checkout
+    const checkout = getCheckoutPath(score);
+    if (checkout && checkout.length <= dartsRemaining) {
+        return { path: checkout, type: 'checkout' };
     }
 
-    // 2. Simple Dynamic Calculation for Low Scores (< 40)
-    // If even number <= 40, try to finish on double.
-    if (score <= 40 && score % 2 === 0) {
-        return [`D${score / 2}`];
-    }
+    // 2. Setup Mode
+    // For high scores or bogey numbers, suggest T20 (or switch to T19 if blocked? simplistic for now)
+    // If score is a bogey (e.g. 169), T20 is usually best.
+    // Return as many T20s as darts remaining
+    const setupPath = Array(dartsRemaining).fill("T20");
+    return { path: setupPath, type: 'setup' };
+};
 
-    // 3. Fallback for Odd numbers < 40
-    // e.g. 39 -> 7, D16? 
-    // e.g. 19 -> 3, D8
+export const getCheckoutPath = (score: number): string[] | null => {
+    if (score > 170) return null;
+
+    // Direct Lookup
+    if (CHECKOUT_MAP[score]) return CHECKOUT_MAP[score];
+
+    // Simple Calc for low scores
+    if (score <= 40 && score % 2 === 0) return [`D${score / 2}`];
+
     if (score < 40 && score % 2 !== 0) {
-        const odd = score - 32; // Try to leave 32 (D16)
-        if (odd > 0 && odd <= 20) {
-            return [`${odd}`, "D16"];
-        }
-        // Or leave 16 (D8)
+        const odd = score - 32;
+        if (odd > 0) return [`${odd}`, "D16"];
         const odd2 = score - 16;
-        if (odd2 > 0 && odd2 <= 20) {
-            return [`${odd2}`, "D8"];
-        }
-        // Just single 1 to setup?
+        if (odd2 > 0) return [`${odd2}`, "D8"];
         return ["1", `D${(score - 1) / 2}`];
     }
 
