@@ -1,11 +1,14 @@
 import React from 'react';
+import { useGameStore } from '../store/useGameStore';
 
 export const Scoreboard: React.FC = () => {
+    const { score, currentTurnThrows } = useGameStore();
+
     return (
         <div className="flex-1 flex flex-col relative w-full overflow-hidden min-h-0">
             <section className="flex flex-col items-center justify-center py-2 shrink-0 bg-surface-dark/20 border-b border-white/5 backdrop-blur-sm relative z-10">
                 <span className="text-slate-400 text-[10px] font-bold tracking-[0.2em] uppercase mb-0.5">REST</span>
-                <h2 className="text-5xl leading-none font-bold text-white tracking-tighter drop-shadow-lg">301</h2>
+                <h2 className="text-5xl leading-none font-bold text-white tracking-tighter drop-shadow-lg">{score}</h2>
             </section>
 
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
@@ -15,22 +18,22 @@ export const Scoreboard: React.FC = () => {
 
                     {/* Darts Indicators */}
                     <div className="flex flex-col gap-6 w-10 items-center justify-center">
-                        <div className="flex flex-col items-center gap-1 opacity-50">
-                            <span className="text-[9px] font-bold text-slate-400 leading-none">D1</span>
-                            <div className="size-1.5 rounded-full bg-slate-600"></div>
-                        </div>
-                        <div className="flex flex-col items-center gap-1 relative">
-                            <span className="text-[10px] font-bold text-orange-500 leading-none">D2</span>
-                            <div className="size-2.5 rounded-full bg-orange-500 shadow-[0_0_10px_rgba(249,115,22,0.8)]"></div>
-                            <div className="absolute left-full top-1/2 -translate-y-1/2 ml-2 w-8 h-[1px] bg-gradient-to-r from-orange-500/50 to-transparent"></div>
-                        </div>
-                        <div className="flex flex-col items-center gap-1 opacity-50">
-                            <span className="text-[9px] font-bold text-slate-400 leading-none">D3</span>
-                            <div className="size-1.5 rounded-full bg-slate-600"></div>
-                        </div>
+                        {[1, 2, 3].map((idx) => {
+                            const count = currentTurnThrows.length;
+                            // If 3 darts thrown, show all 3 filled. Otherwise show modulo.
+                            const activeCount = (count > 0 && count % 3 === 0) ? 3 : count % 3;
+                            const active = idx <= activeCount;
+
+                            return (
+                                <div key={idx} className={`flex flex-col items-center gap-1 ${active ? '' : 'opacity-50'}`}>
+                                    <span className="text-[9px] font-bold text-slate-400 leading-none">D{idx}</span>
+                                    <div className={`size-1.5 rounded-full ${active ? 'bg-primary shadow-glow' : 'bg-slate-600'}`}></div>
+                                </div>
+                            );
+                        })}
                     </div>
 
-                    {/* Main Vis */}
+                    {/* Main Vis - Placeholder for now */}
                     <div className="relative w-44 h-44 flex items-center justify-center group mx-auto">
                         <div className="absolute inset-0 rounded-full border border-primary/20 blur-sm scale-105 animate-pulse"></div>
                         <div className="absolute inset-0 rounded-full border-[8px] border-surface-dark shadow-[inset_0_0_20px_rgba(0,0,0,0.5)]"></div>
@@ -44,7 +47,7 @@ export const Scoreboard: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Checkout Suggestions */}
+                    {/* Checkout Suggestions - Static for now */}
                     <div className="flex flex-col gap-6 w-10 items-center justify-center">
                         <div className="flex flex-col items-center opacity-30 scale-90">
                             <span className="text-sm font-bold text-white">?</span>
@@ -59,7 +62,7 @@ export const Scoreboard: React.FC = () => {
                 </div>
             </div>
 
-            {/* Checkout Path */}
+            {/* Checkout Path - Static for now */}
             <div className="shrink-0 w-full py-3 bg-surface-darker/50 border-t border-white/5 backdrop-blur-md">
                 <div className="flex items-center justify-center gap-3">
                     <div className="flex flex-col items-center gap-1">
