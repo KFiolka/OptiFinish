@@ -26,3 +26,19 @@ Dies behob den Build-Fehler sofort.
 
 **Learning:**  
 Bei kryptischen Build-Fehlern, die lokal in `tsc` nicht auftreten, hilft oft eine explizitere Schreibweise und das Aufbrechen von komplexen Ausdrücken (`Bisecting`).
+
+## 2. Zustand Re-Renders & Getters
+**Problem:**  
+Wie aktualisiert man eine UI-Komponente basierend auf einem berechneten Wert (`getStats()`) aus dem Store, ohne explizite Selektoren zu bauen?
+
+**Lösung:**  
+Wenn man den gesamten Store-State (oder Teile davon ohne spezifischen Selektor) via `useGameStore()` destructuring abruft:
+```typescript
+const { score, history } = useGameStore();
+```
+Rendert die Komponente bei *jedem* Store-Update neu.
+Dadurch kann eine Helper-Funktion `getStats()`, die aktuelle Werte via `get()` liest, einfach im Render-Body aufgerufen werden:
+```typescript
+const stats = getStats(); // Calculated on every render
+```
+Dies ist für einfache Apps akzeptabel (wenig Performance-Impact), spart Boilerplate für Selektoren. Für größere Apps wären memorisierte Selektoren (`useShallow`) besser.
