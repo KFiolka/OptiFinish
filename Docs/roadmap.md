@@ -32,4 +32,4 @@
 - [x] **Game Logic Rules**
     - [x] Bust-Logik (Überworfen)
     - [x] Double-Out Validierung
-    - [x] Match Won State
+    - [x] Match Won State (Localisiert: Deutsch)
