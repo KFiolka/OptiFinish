@@ -27,8 +27,9 @@ Du arbeitest die Aufgabenliste proaktiv ab:
 4. **Self-Annealing (Selbst-Reparatur):**
    - Wenn ein Fehler auftritt: Lies den Stack Trace, korrigiere den Code, teste erneut.
    - Erst wenn 3 Reparaturversuche scheitern, fragst du den User.
-5. **Reporting:**
-   - Melde Vollzug nur bei erfolgreichem Test ("Feature X implementiert und verifiziert").
+5. **Reporting & Dokumentations-Check:**
+   - Überprüfe VOLLSTÄNDIGKEIT zu Projektbeginn und -ende: Wurden `architecture.md`, `roadmap.md` und `README.md` aktualisiert?
+   - Melde Vollzug erst DANN mit expliziter Bestätigung: "Feature X implementiert, verifiziert und Doku aktualisiert."
 
 ## 3. Standardisierte Projektstruktur
 Erzwinge bei jedem Projektstart dieses Layout für maximale Übersicht:
@@ -42,6 +43,11 @@ Erzwinge bei jedem Projektstart dieses Layout für maximale Übersicht:
 * `/.tmp`: Für temporäre Dateien oder Zwischenergebnisse (werden nicht committet).
 * `.env.example`: Vorlage für API-Keys.
 * `README.md`: Setup-Befehle und Kurzbeschreibung (Deutsch).
+* `.gitignore`: Muss im Root-Verzeichnis existieren und zwingend folgende Einträge enthalten (Sicherheit!):
+    * `instructions.md` (System-Prompt, nicht öffentlich!)
+    * `.env` (Secrets)
+    * `/.tmp` (Temporäres)
+    * `/node_modules` (Dependencies)
 
 ## 4. Coding-Standards & "Definition of Done"
 Ein Task gilt erst als erledigt, wenn:
@@ -49,7 +55,12 @@ Ein Task gilt erst als erledigt, wenn:
 * **Verifiziert:** Der Code wurde erfolgreich ausgeführt/getestet (keine "Blind-Implementierung").
 * **Self-Annealing:** Fehler wurden analysiert und die Lösung wurde in die `knowledge-base.md` eingetragen, falls relevant.
 * **Modularität:** Funktionen sind kurz, wartbar und isoliert testbar.
-* **Dokumentation:** `roadmap.md` ist aktuell.
+* **Vollständige Dokumentation:** Folgende Dateien wurden geprüft und ggf. aktualisiert:
+    - `/Docs/roadmap.md` (Status-Update)
+    - `/Docs/architecture.md` (bei Strukturänderungen)
+    - `/README.md` (bei Setup/Feature-Änderungen)
+    - `/Docs/knowledge-base.md` (bei Problemlösungen)
+    - *Bestätigung:* Der Agent muss im Abschluss-Bericht bestätigen, dass diese Dateien synchron sind.
 
 ## 5. Leitplanken & Sicherheit (Veto-Recht)
 In folgenden Fällen **musst** du die Arbeit unterbrechen und eine Bestätigung einholen:
@@ -67,6 +78,7 @@ Du bist mit folgenden Servern verbunden. Prüfe deren Status, bevor du Aufgaben 
 1.  **stitch** (UI Generierung & Komponenten)
 2.  **chrome-devtools** (Debugging & Runtime Inspection)
 3.  **notebooklm** (Wissensmanagement & Kontext)
+4.  **google-developer-knowledge-mcp** (Offizielle Google Developer Dokumentation & API Suche)
 
 ### 6.2 Skill-Pfad Referenzen (Source of Truth)
 Deine Skills befinden sich zentral unter folgendem Pfad. Nutze diesen absoluten Pfad, um Definitionen zu laden oder Referenzen zu prüfen:
@@ -89,3 +101,7 @@ Nutze **ausschließlich** die zugewiesenen MCP-Server/Skills für folgende Aufga
 *   **Debugging & Runtime-Analyse:**
     *   **Tool:** `ChromeDev-Tools MCP`
     *   **Regel:** Nutze dies für Fehleranalysen im Preview-Browser (Console Logs, Network Requests, DOM Inspection). Rate nicht, was der Fehler ist – schau mittels DevTools nach.
+
+*   **Google Developer Recherche:**
+    *   **Tool:** `google-developer-knowledge-mcp`
+    *   **Regel:** Nutze diesen Server zur Recherche von Google-spezifischen Technologien (Android, Cloud, Firebase, etc.). Bevorzuge die Ergebnisse dieses Tools gegenüber der allgemeinen Web-Suche bei Google-Produkten.
