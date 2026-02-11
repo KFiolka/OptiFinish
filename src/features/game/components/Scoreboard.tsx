@@ -55,21 +55,21 @@ export const Scoreboard: React.FC = () => {
         switch (phase) {
             case 'SCORING':
                 return {
-                    label: 'PHASE: SCORING',
+                    label: 'SCORING',
                     ringColor: 'border-slate-400', // Ice/White-ish
                     textColor: 'text-slate-400',
                     pulse: false
                 };
             case 'SETUP':
                 return {
-                    label: 'PHASE: SETUP',
+                    label: 'SETUP',
                     ringColor: 'border-amber-400', // Amber/Focus
                     textColor: 'text-amber-400',
                     pulse: true
                 };
             case 'CHECKOUT':
                 return {
-                    label: 'PHASE: CHECKOUT',
+                    label: 'CHECKOUT',
                     ringColor: 'border-primary', // Electric Blue
                     textColor: 'text-primary',
                     pulse: true
