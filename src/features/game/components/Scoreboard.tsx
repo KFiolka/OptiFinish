@@ -83,38 +83,38 @@ export const Scoreboard: React.FC = () => {
         <div className="flex-1 flex flex-col relative w-full overflow-hidden min-h-0">
             <section className="flex flex-col items-center justify-center py-2 shrink-0 bg-surface-dark/20 border-b border-white/5 backdrop-blur-sm relative z-10 w-full">
                 <span className="text-slate-400 text-[10px] font-bold tracking-[0.2em] uppercase mb-0.5">REST</span>
-                <h2 className="text-5xl leading-none font-bold text-white tracking-tighter drop-shadow-lg">{score}</h2>
+                <h2 className="text-5xl xs:text-6xl sm:text-7xl leading-none font-bold text-white tracking-tighter drop-shadow-lg transition-all duration-300">{score}</h2>
 
                 {/* Stats Bar */}
-                <div className="flex items-center gap-4 mt-2 opacity-80">
+                <div className="flex items-center gap-4 mt-1 xs:mt-2 opacity-80">
                     <div className="flex flex-col items-center">
-                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">Ø</span>
-                        <span className="text-sm text-slate-200 font-bold tabular-nums tracking-tight">{stats.avg}</span>
+                        <span className="text-[9px] xs:text-[10px] text-slate-500 uppercase tracking-widest font-bold">Ø</span>
+                        <span className="text-xs xs:text-sm text-slate-200 font-bold tabular-nums tracking-tight">{stats.avg}</span>
                     </div>
-                    <div className="w-px h-6 bg-white/10"></div>
+                    <div className="w-px h-4 xs:h-6 bg-white/10"></div>
                     <div className="flex flex-col items-center">
-                        <span className="text-[10px] text-slate-500 uppercase tracking-widest font-bold">DARTS</span>
-                        <span className="text-sm text-slate-200 font-bold tabular-nums tracking-tight">{stats.darts}</span>
+                        <span className="text-[9px] xs:text-[10px] text-slate-500 uppercase tracking-widest font-bold">DARTS</span>
+                        <span className="text-xs xs:text-sm text-slate-200 font-bold tabular-nums tracking-tight">{stats.darts}</span>
                     </div>
                 </div>
             </section>
 
             <div className="absolute inset-0 opacity-[0.03] pointer-events-none" style={{ backgroundImage: 'radial-gradient(#fff 1px, transparent 1px)', backgroundSize: '24px 24px' }}></div>
 
-            <div className="flex-1 flex items-center justify-center w-full px-4 py-2">
-                <div className="flex items-center justify-between w-full relative">
+            <div className="flex-1 flex items-center justify-center w-full px-4 py-2 min-h-0 overflow-y-auto">
+                <div className="flex items-center justify-between w-full relative max-w-md mx-auto">
 
                     {/* Darts Indicators */}
-                    <div className="flex flex-col gap-6 w-10 items-center justify-center">
+                    <div className="flex flex-col gap-2 xs:gap-3 sm:gap-6 w-6 xs:w-8 sm:w-10 items-center justify-center">
                         {[1, 2, 3].map((idx) => {
                             const count = currentTurnThrows.length;
                             const activeCount = (count > 0 && count % 3 === 0) ? 3 : count % 3;
                             const active = idx <= activeCount;
 
                             return (
-                                <div key={idx} className={`flex flex-col items-center gap-1 ${active ? '' : 'opacity-50'}`}>
-                                    <span className="text-[9px] font-bold text-slate-400 leading-none">D{idx}</span>
-                                    <div className={`size-1.5 rounded-full ${active ? 'bg-primary shadow-glow' : 'bg-slate-600'}`}></div>
+                                <div key={idx} className={`flex flex-col items-center gap-0.5 xs:gap-1 ${active ? '' : 'opacity-50'}`}>
+                                    <span className="text-[8px] xs:text-[9px] font-bold text-slate-400 leading-none">D{idx}</span>
+                                    <div className={`size-1 xs:size-1.5 rounded-full ${active ? 'bg-primary shadow-glow' : 'bg-slate-600'}`}></div>
                                 </div>
                             );
                         })}
@@ -123,28 +123,28 @@ export const Scoreboard: React.FC = () => {
                     {/* Main Vis */}
                     <div
                         onClick={() => pathSteps.length > 0 && handlePathClick(pathSteps[0])}
-                        className={`relative w-44 h-44 flex items-center justify-center group mx-auto transition-transform active:scale-95 ${pathSteps.length > 0 ? 'cursor-pointer' : ''}`}
+                        className={`relative w-32 h-32 xs:w-40 xs:h-40 sm:w-48 sm:h-48 flex items-center justify-center group mx-auto transition-all duration-300 active:scale-95 ${pathSteps.length > 0 ? 'cursor-pointer' : ''}`}
                     >
                         <div className={`absolute inset-0 rounded-full border ${phaseStyle.ringColor}/20 blur-sm scale-105 ${phaseStyle.pulse ? 'animate-pulse' : ''}`}></div>
-                        <div className={`absolute inset-0 rounded-full border-[8px] shaow-[inset_0_0_20px_rgba(0,0,0,0.5)] transition-colors ${phaseStyle.ringColor} ${pathSteps.length > 0 ? 'group-hover:brightness-125' : ''}`}></div>
+                        <div className={`absolute inset-0 rounded-full border-[6px] sm:border-[8px] shaow-[inset_0_0_20px_rgba(0,0,0,0.5)] transition-colors ${phaseStyle.ringColor} ${pathSteps.length > 0 ? 'group-hover:brightness-125' : ''}`}></div>
                         <svg className="absolute inset-0 size-full -rotate-90 transform drop-shadow-glow-intense" viewBox="0 0 100 100">
                             <circle cx="50" cy="50" fill="transparent" r="44" stroke="currentColor" className={phaseStyle.textColor} strokeOpacity="0.1" strokeLinecap="round" strokeWidth="6"></circle>
                         </svg>
                         <div className="flex flex-col items-center justify-center z-10 text-center">
                             {pathSteps.length > 0 ? (
                                 <>
-                                    <span className={`text-[9px] uppercase tracking-[0.25em] font-bold mb-1 drop-shadow-md ${phaseStyle.textColor}`}>
+                                    <span className={`text-[9px] xs:text-[10px] uppercase tracking-[0.25em] font-bold mb-1 drop-shadow-md ${phaseStyle.textColor}`}>
                                         {phaseStyle.label}
                                     </span>
-                                    <span className="text-4xl font-bold text-white tracking-tighter drop-shadow-lg">
+                                    <span className="text-3xl xs:text-4xl sm:text-5xl font-bold text-white tracking-tighter drop-shadow-lg transition-all duration-300">
                                         {isCheckout ? pathSteps.join(" ") : pathSteps[0]}
                                     </span>
                                 </>
                             ) : (
                                 <>
-                                    <span className="text-[9px] uppercase tracking-[0.25em] text-slate-500 font-bold mb-1 drop-shadow-md">WAITING</span>
+                                    <span className="text-[9px] xs:text-[10px] uppercase tracking-[0.25em] text-slate-500 font-bold mb-1 drop-shadow-md">WAITING</span>
                                     <div className="flex flex-col items-center">
-                                        <span className="text-sm text-slate-400">...</span>
+                                        <span className="text-sm xs:text-base text-slate-400">...</span>
                                     </div>
                                 </>
                             )}
@@ -152,7 +152,7 @@ export const Scoreboard: React.FC = () => {
                     </div>
 
                     {/* Checkout Suggestions - Visual Representation / Next Steps */}
-                    <div className="flex flex-col gap-6 w-10 items-center justify-center">
+                    <div className="flex flex-col gap-2 xs:gap-3 sm:gap-6 w-6 xs:w-8 sm:w-10 items-center justify-center">
                         {pathSteps.length > 1 ? (
                             pathSteps.slice(1, 4).map((step, idx) => (
                                 <div
@@ -160,11 +160,11 @@ export const Scoreboard: React.FC = () => {
                                     onClick={() => handlePathClick(step)}
                                     className={`flex flex-col items-center opacity-80 scale-90 cursor-pointer hover:opacity-100 hover:scale-100 transition-all active:scale-90`}
                                 >
-                                    <span className="text-xs font-bold text-white">{step}</span>
+                                    <span className="text-[9px] xs:text-[10px] sm:text-xs font-bold text-white">{step}</span>
                                 </div>
                             ))
                         ) : (
-                            <div className="opacity-20"><span className="text-xs">...</span></div>
+                            <div className="opacity-20"><span className="text-[10px] xs:text-xs">...</span></div>
                         )}
                     </div>
                 </div>
